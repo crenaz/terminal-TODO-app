@@ -3,8 +3,12 @@ and then going [here](https://pythongui.org/how-to-build-a-todo-tui-application-
 
 
 
+
+
 "This is a basic template for a new project. Files that will be used across most of my projects." 
 --Shawn McElroy
+
+*original README below*
 
 # Writing Co.De website
 

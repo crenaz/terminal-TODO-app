@@ -1,0 +1,19 @@
+{
+  "extends": ["config:base", "schedule:weekly"],
+  "rangeStrategy": "update-lockfile",
+  "automerge": false,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "assignees": ["autoferrit"],
+  "bumpVersion": "patch",
+  "packageRules": [
+    {
+      "packagePatterns": ["^netlify-cms"],
+      "schedule": null
+    }
+  ]
+}

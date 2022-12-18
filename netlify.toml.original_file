@@ -1,0 +1,30 @@
+# [build]
+#   publish = "public"
+#   command = "rm -rf public && npm run build"
+
+# [[redirects]]
+#   from = "http://writingco.de"
+#   to = "https://writingco.de"
+
+# [[redirects]]
+#   from = "http://writingco.de/*"
+#   to = "https://writingco.de/:splat"
+#   status = 301
+
+# [[redirects]]
+#   from = "writingco.de"
+#   to = "https://writingco.de"
+
+# [[redirects]]
+#   from = "writingco.de/*"
+#   to = "https://writingco.de/:splat"
+#   status = 301
+
+# [[redirects]]
+#   from = "writingcode.netlify.com"
+#   to = "https://writingco.de"
+
+# [[redirects]]
+#   from = "https://writingcode.netlify.com/*"
+#   to = "https://writingco.de/:splat"
+#   status = 302
