@@ -6,6 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+fastapi = "*"
+uvicorn = "*"
+textual-inputs = "*"
+textual = {extras = ["dev"], version = "*"}
+rich = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.11.1"
