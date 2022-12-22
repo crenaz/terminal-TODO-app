@@ -5,8 +5,8 @@ from textual.widgets import Footer, Header, Static
 from textual_inputs import TextInput
 
 class SimpleForm(App):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
 
     async def on_load(self) -> None:
         # Bind the q button to quit.
