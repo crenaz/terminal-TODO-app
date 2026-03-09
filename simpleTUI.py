@@ -4,9 +4,12 @@ from textual.app import App
 from textual.widgets import Footer, Header, Static
 from textual_inputs import TextInput
 
+
 class SimpleForm(App):
-    def __init__(self, *args) -> None:
-        super().__init__(*args)
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.tasks = []
+        self.status_message = "Type 'add <task>', 'done <n>', or 'del <n>'."
 
     async def on_load(self) -> None:
         # Bind the q button to quit.
@@ -20,17 +23,17 @@ class SimpleForm(App):
         await self.view.dock(Header(), edge="top")
         await self.view.dock(Footer(), edge="bottom")
 
-        # Creates a Text Input that allows you to type text
+        # Creates a Text Input that allows you to type commands
         self.text = TextInput(
             name="Text",
-            placeholder="enter your Text...",
-            title="Text",
+            placeholder="add <task>, done <n>, del <n>",
+            title="TODO Input",
         )
 
-        # Creates a Panel that displays your text.
+        # Creates a Panel that displays your TODO list.
         self.output = Static(
             renderable=Panel(
-                "", title="Output", border_style="blue", box=rich.box.SQUARE
+                "", title="TODOs", border_style="blue", box=rich.box.SQUARE
             )
         )
 
@@ -38,17 +41,87 @@ class SimpleForm(App):
         await self.view.dock(self.output, edge="left", size=40)
         await self.view.dock(self.text, edge="top")
 
+        await self.refresh_output()
+
+    def _build_panel(self) -> Panel:
+        """Build the panel showing current tasks and help."""
+        if not self.tasks:
+            body_lines = ["No tasks yet.", "Use 'add <task>' to create one."]
+        else:
+            body_lines = []
+            for index, task in enumerate(self.tasks, start=1):
+                status = "[green][x][/green]" if task["done"] else "[red][ ][/red]"
+                body_lines.append(f"{index}. {status} {task['title']}")
+
+        body_lines.append("")
+        body_lines.append(self.status_message)
+
+        body = "\n".join(body_lines)
+        return Panel(body, title="TODOs", border_style="blue", box=rich.box.SQUARE)
+
+    async def refresh_output(self) -> None:
+        """Re-render the TODO list panel."""
+        await self.output.update(self._build_panel())
+
     async def action_submit(self) -> None:
-        # Retrieve the value from the Input text box.
-        val = self.text.value
-
-        # Format and update the value in the output panel
-        await self.output.update(
-            Panel(val, title="Output", border_style="blue", box=rich.box.SQUARE)
-        )
-
+        raw = self.text.value.strip()
         # Empty the text box for the next input.
         self.text.value = ""
+
+        if not raw:
+            self.status_message = "Empty input ignored. Use 'add <task>'."
+            await self.refresh_output()
+            return
+
+        parts = raw.split(maxsplit=1)
+        command = parts[0].lower()
+        argument = parts[1] if len(parts) > 1 else ""
+
+        if command in ("add", "a"):
+            title = argument.strip()
+            if not title:
+                self.status_message = "Cannot add an empty task."
+            else:
+                self.tasks.append({"title": title, "done": False})
+                self.status_message = f"Added task: {title!r}"
+        elif command in ("done", "d"):
+            if not argument.isdigit():
+                self.status_message = "Usage: done <task_number>"
+            else:
+                index = int(argument) - 1
+                if 0 <= index < len(self.tasks):
+                    self.tasks[index]["done"] = True
+                    self.status_message = f"Marked task {argument} as done."
+                else:
+                    self.status_message = f"No task with number {argument}."
+        elif command in ("undone", "u"):
+            if not argument.isdigit():
+                self.status_message = "Usage: undone <task_number>"
+            else:
+                index = int(argument) - 1
+                if 0 <= index < len(self.tasks):
+                    self.tasks[index]["done"] = False
+                    self.status_message = f"Marked task {argument} as not done."
+                else:
+                    self.status_message = f"No task with number {argument}."
+        elif command in ("del", "delete", "remove", "rm"):
+            if not argument.isdigit():
+                self.status_message = "Usage: del <task_number>"
+            else:
+                index = int(argument) - 1
+                if 0 <= index < len(self.tasks):
+                    removed = self.tasks.pop(index)
+                    self.status_message = (
+                        f"Deleted task {argument}: {removed['title']!r}"
+                    )
+                else:
+                    self.status_message = f"No task with number {argument}."
+        else:
+            # Treat unrecognized input as a shorthand for adding a task.
+            self.tasks.append({"title": raw, "done": False})
+            self.status_message = f"Added task: {raw!r}"
+
+        await self.refresh_output()
 
 # Running our form here...
 if __name__ == "__main__":

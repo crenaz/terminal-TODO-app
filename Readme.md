@@ -1,46 +1,82 @@
-I'm starting [here](https://medium.com/@autoferrit/how-to-use-pyenv-pipenv-for-python-virtual-environments-fe70459a4037), 
-and then going [here](https://pythongui.org/how-to-build-a-todo-tui-application-with-textual/)
+## Terminal TODO App (Textual TUI)
 
+This project is a small **terminal-based TODO manager** built with the
+[`textual`](https://github.com/Textualize/textual) framework and `rich`. It
+runs entirely in your terminal and lets you manage a numbered list of tasks
+with simple commands.
 
+The original Django/CodeRed CMS README was template text and is no longer
+relevant to this project.
 
+### Features
 
+- **In-terminal UI**: Header, footer, input box and TODO panel using Textual.
+- **Simple commands** to manage tasks:
+  - **Add** a task: `add buy milk` (or just `buy milk`)
+  - **Mark done**: `done 2`
+  - **Mark not done**: `undone 2`
+  - **Delete**: `del 2` (also `delete`, `remove`, `rm`)
+- **Visual status**:
+  - `[x]` for completed tasks
+  - `[ ]` for pending tasks
+- **Inline help** in the TODO panel showing available commands and status
+  messages.
 
-"This is a basic template for a new project. Files that will be used across most of my projects." 
---Shawn McElroy
+### Requirements
 
-*original README below*
+- Python 3.8+ (recommended)
+- `textual`
+- `rich`
+- `textual-inputs`
 
-# Writing Co.De website
+You can install the dependencies either with `pipenv` (recommended for this
+project) or plain `pip`.
 
-## Getting started
+#### Using pipenv
 
-Make sure Python 3.4 or higher is installed on your system.
-Open this directory in a command prompt, then:
+From the project root:
 
-1. Install the software, and the dev tooling:
-    ```
-    pip install -r requirements.txt -r requirements-dev.txt
-    ```
+```bash
+pipenv install
+pipenv run python simpleTUI.py
+```
 
-2. Build the Sass:
-    ```
-    python manage.py sass website/static/website/src/custom.scss website/static/website/css/
-    ```
-    To build the Sass automatically whenever you change a file, add the `--watch` option and run it in a separate terminal. For more options, see [django-sass](https://github.com/coderedcorp/django-sass/).
+#### Using pip
 
-3. Run the development server:
-    ```
-    python manage.py runserver
-    ```
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install textual rich textual-inputs
+python simpleTUI.py
+```
 
-4. Go to http://localhost:8000/ in your browser, or http://localhost:8000/admin/ to log in and get to work!
+### Usage
 
-## Documentation links
+When the app starts, you will see:
 
-* To customize the content, design, and features of the site see [CodeRed CMS](https://docs.coderedcorp.com/cms/).
-* For deeper customization of backend code see [Wagtail](http://docs.wagtail.io/) and [Django](https://docs.djangoproject.com/).
-* For HTML template design see [Bootstrap](https://getbootstrap.com/).
+- A **TODOs panel** on the left with the current list of tasks.
+- An **input box** where you can type commands.
 
----
+Type commands into the input box and press **Enter**:
 
-Made with ♥ using [CodeRed CMS](https://www.coderedcorp.com/cms/)
+- **Add a task**
+  - `add buy milk`
+  - or simply: `buy milk`
+- **Mark a task as done**
+  - `done 1`
+- **Mark a task as not done**
+  - `undone 1`
+- **Delete a task**
+  - `del 1`
+- **Quit the app**
+  - Press `q`
+
+Tasks are stored **in memory only** for the current session. Closing the app
+will clear the list.
+
+### Notes
+
+- This project was inspired by:
+  - [`pyenv`/`pipenv` workflow article](https://medium.com/@autoferrit/how-to-use-pyenv-pipenv-for-python-virtual-environments-fe70459a4037)
+  - [Textual TODO TUI tutorial](https://pythongui.org/how-to-build-a-todo-tui-application-with-textual/)
+
