@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import rich.box
 from rich.panel import Panel
 from textual.app import App
@@ -8,8 +11,45 @@ from textual_inputs import TextInput
 class SimpleForm(App):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self.storage_path = Path("tasks.json")
         self.tasks = []
         self.status_message = "Type 'add <task>', 'done <n>', or 'del <n>'."
+        self._load_tasks()
+
+    def _load_tasks(self) -> None:
+        """Load tasks from disk if a save file exists."""
+        try:
+            if self.storage_path.exists():
+                data = json.loads(self.storage_path.read_text(encoding="utf-8"))
+                if isinstance(data, list):
+                    # Basic validation: each item should be a dict with title/done.
+                    cleaned = []
+                    for item in data:
+                        if (
+                            isinstance(item, dict)
+                            and "title" in item
+                            and "done" in item
+                        ):
+                            cleaned.append(
+                                {"title": str(item["title"]), "done": bool(item["done"])}
+                            )
+                    self.tasks = cleaned
+                    if self.tasks:
+                        self.status_message = "Loaded tasks from tasks.json."
+        except Exception:
+            # Ignore corrupt files; start with an empty list.
+            self.tasks = []
+
+    def _save_tasks(self) -> None:
+        """Persist tasks to disk."""
+        try:
+            self.storage_path.write_text(
+                json.dumps(self.tasks, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+        except Exception:
+            # If saving fails, don't crash the UI; leave status as-is.
+            pass
 
     async def on_load(self) -> None:
         # Bind the q button to quit.
@@ -121,6 +161,7 @@ class SimpleForm(App):
             self.tasks.append({"title": raw, "done": False})
             self.status_message = f"Added task: {raw!r}"
 
+        self._save_tasks()
         await self.refresh_output()
 
 # Running our form here...

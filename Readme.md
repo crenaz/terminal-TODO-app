@@ -68,11 +68,19 @@ Type commands into the input box and press **Enter**:
   - `undone 1`
 - **Delete a task**
   - `del 1`
-- **Quit the app**
+-- **Quit the app**
   - Press `q`
 
-Tasks are stored **in memory only** for the current session. Closing the app
-will clear the list.
+### Persistence
+
+- Tasks are stored in a simple JSON file named `tasks.json` in the project
+  directory.
+- When the app starts, it will **load existing tasks** from `tasks.json` (if
+  present).
+- After any change (add, done, undone, delete), the app will **save the
+  updated list** back to `tasks.json`.
+- If `tasks.json` does not exist yet, it will be created automatically the
+  first time you modify the list.
 
 ### Notes
 

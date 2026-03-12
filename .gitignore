@@ -397,3 +397,8 @@ protected/
 # replace "media/" with "media/images/"
 media/
 #media/images/
+#
+
+# Tasks should be private
+tasks.json
+
